@@ -1,0 +1,504 @@
+//------------------------------------------------------------------------------
+//
+// cRational
+// cRational.h
+// cRational is a class that can represent rational numbers. 
+//  Arithmetic operations are performed through overloaded operators
+// a streaming operator is provided
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+// include guard
+
+#ifndef OOP_RATIONALNUMBER_H
+#define OOP_RATIONALNUMBER_H
+
+//------------------------------------------------------------------------------
+// include files
+#include <iostream>
+
+//------------------------------------------------------------------------------
+// namespace definition
+namespace OOP {
+
+	//------------------------------------------------------------------------------
+	/*! \class cRational cRational.h
+	 *   \brief This is the cRational class .
+	 */
+	class cRational {
+	public:
+		// Initialize the rational The default value should be 0/1
+		// Default Constructor
+		cRational();
+
+		// Complete Constructor
+		cRational(long long n, long long d);
+
+		// Copy Constructor
+		cRational(const cRational& b);
+
+		// Destructor
+		~cRational();
+
+		// Set the numerator to the given value. The denominator should be set to be 1.
+		void Set(long long numerator);
+
+		// Set both the numerator and denominator. Reduce to canonical form the rational if necessary.
+		void Set(long long numerator, long long denominator);
+
+		void SetNumerator(long long numerator);
+
+		void SetDenominator(long long denominator);
+
+		// Return the numerator.
+		long long Numerator(void)const;
+
+		// Return the denominator.
+		long long Denominator(void)const;
+
+		// Return the floating point value of the rational.
+		double RealValue(void) const;
+
+		// Add two rationals producing a new rational. The new rational should be canonical form.
+		cRational operator +(const cRational& b) const;
+
+		// Add Function producing a new rational.
+		cRational Add(cRational& r1, cRational& r2)const;
+
+		// Subtract two rationals producing a new rationals. The new rationals should be canonical form.
+		cRational operator -(const cRational& b) const;
+
+		// Multiply two rationals producing a new rationals. The new rationals should be canonical form.
+		cRational operator *(const cRational& b) const;
+
+		friend cRational operator*(const cRational& r1, long long value);
+		friend cRational operator*(long long value, const cRational& f1);
+		cRational& operator*=(const cRational& rhs);
+
+		// Divide two rationals producing a new rational. The new rational should be canonical form.
+		cRational operator /(const cRational& b) const;
+
+		// Comparison of two rationals
+		friend bool operator < (const cRational& lhs, const cRational& rhs) {
+			return((lhs.Numerator() * rhs.Denominator()) < (rhs.Numerator() * lhs.Denominator()));
+		}
+
+		// once operator< is provided, the other relational operators are implemented in terms of operator<
+		friend bool operator > (const cRational& lhs, const cRational& rhs) { // Comparison of two rational
+			return(lhs.Numerator() * rhs.Denominator() > rhs.Numerator() * lhs.Denominator());
+		}
+
+		// Implement the operator<
+		friend bool operator <=(const cRational& lhs, const cRational& rhs) {
+			return((lhs < rhs) || (lhs == rhs));
+		};
+
+		// Implement the operator<
+		friend bool operator >=(const cRational& lhs, const cRational& rhs) {
+			return ((lhs > rhs) || (lhs == rhs));
+		};
+
+		// Implement the operator ==
+		friend bool operator ==(const cRational& lhs, const cRational& rhs) {
+			return(lhs.Numerator() == rhs.Numerator() && lhs.Denominator() == rhs.Denominator());
+		};
+
+		// the inequality operator is typically implemented in terms of operator==
+		friend bool operator !=(const cRational& lhs, const cRational& rhs) {
+			return !(lhs == rhs);
+		};
+
+		// access the numerator [0] or denominator [1]
+		long long& operator[](std::size_t idx);
+		 
+
+		// access the numerator [0] or denominator [1]
+		const long long& operator[](std::size_t idx) const;
+
+		// produce a new rational which is the opposite of this
+		cRational opposite(void)const;
+
+		// produce a new rational which is the reciprocal of this
+		cRational reciprocal(void)const;
+
+		// produce a new rational which is Exponentiation to integer power n
+		cRational exp(const int n)const;
+
+		// Compute the Greatest Comon Denominator of two integers. See notes below.
+		long long GCD(long long a, long long b) const;
+
+		// Reduce the rational to its canonical form
+		void canonicalform(void);
+
+		// We'll make gcd static so that it can be part of class rational without
+		// requiring an object of type cRational
+		static long long Greatest_Comon_Denominator(long long a, long long b);
+
+		friend std::istream& operator>>(std::istream& is, cRational& obj);
+			
+
+		friend inline std::ostream& operator<<(std::ostream& os, const OOP::cRational& a) {
+			os << a.Numerator() << "/" << a.Denominator();
+			return os;
+		}
+
+
+	private:
+		long long myNumerator;
+		long long myDenominator;
+	};
+}
+
+#endif
+
+
+#include "cRational.h"
+
+using namespace OOP;
+
+//default constructor
+cRational::cRational() :
+	myNumerator(0),
+	myDenominator(1){
+
+}
+
+//complete constructor
+cRational::cRational(long long n, long long d) :
+	myNumerator(n),
+	myDenominator(d){
+}
+
+//copy constructor
+cRational::cRational(const cRational& b) : 
+	myNumerator(b.Numerator()),
+	myDenominator(b.Denominator()) {
+}
+
+//Destructor
+cRational::~cRational() {
+}
+
+// Set the numerator to the given value. The denominator should be set to be 1.
+void cRational::Set(long long numerator) {
+	myNumerator=numerator;
+	myDenominator = 1;
+};
+
+// Set both the numerator and denominator. Reduce to canonical form the rational if necessary.
+void cRational::Set(long long numerator, long long denominator) {
+	long long gcd = GCD(numerator, denominator);
+
+	myNumerator = numerator / gcd;
+	myDenominator = denominator / gcd;
+	if (myDenominator < 0) {
+		myNumerator = -myNumerator;
+		myDenominator = -myDenominator;
+	}
+};
+
+//Accessor functions
+void cRational:: SetNumerator(long long numerator) {
+	myNumerator = numerator;
+};
+
+void cRational:: SetDenominator(long long denominator){
+	myDenominator = denominator;
+};
+
+// Return the numerator.
+long long cRational::Numerator(void)const {
+	return myNumerator; 
+};
+
+// Return the denominator.
+long long cRational::Denominator(void)const {
+	return myDenominator; 
+};
+
+
+// Return the floating point value of the rational.
+double cRational::RealValue(void) const {
+	return (myNumerator/ (double)myDenominator);
+};
+
+// Compute GCD of two integers
+long long cRational::GCD(long long a, long long b)const { 
+	if (a < 0) {
+		a = -a;
+	}
+	if (b < 0) {
+		b = -b;
+	}
+	while (b != 0) {
+		long long x = b;
+		b = a % b;
+		a = x;
+	}
+	return a;
+}
+
+// Reduce rational to canonical form
+void cRational::canonicalform(void) {
+	long long gcd = GCD(myNumerator, myDenominator);
+
+	myNumerator = myNumerator / gcd;
+	myDenominator = myDenominator / gcd;
+	if (myDenominator < 0) {
+		myNumerator = -myNumerator;
+		myDenominator = -myDenominator;
+	}
+}
+
+
+// Add two rationals producing a new rational. The new rational should be canonical form.
+cRational cRational::operator +(const cRational& b) const {
+	cRational plus;
+	plus.Set((this->Numerator() * b.Denominator()) + (this->Denominator() * b.Numerator()), this->Denominator() * b.Denominator());
+	return plus;
+};
+
+// Add Function producing a new rational.
+cRational cRational::Add(cRational& r1, cRational& r2) const {
+	cRational plus;
+	plus.Set((r1.Numerator() * r2.Denominator()) + (r1.Denominator() * r2.Numerator()), r1.Denominator() * r2.Denominator());
+	return plus;
+};
+
+// Subtract two rationals producing a new rationals. The new rationals should be canonical form.
+cRational cRational::operator -(const cRational& b) const {
+	cRational minus;
+	minus.Set((this->Numerator() * b.Denominator()) - (this->Denominator() * b.Numerator()), this->Denominator() * b.Denominator());
+	return minus;
+};
+
+// Multiply two rationals producing a new rationals. The new rationals should be canonical form.
+cRational cRational::operator *(const cRational& b) const {
+	cRational multiply;
+	multiply.Set(this->Numerator() * b.Numerator(), this->Denominator() * b.Denominator());
+	return multiply;
+}
+
+// Divide two rationals producing a new rational. The new rational should be canonical form.
+cRational cRational::operator /(const cRational& b) const {
+	cRational divide;
+	divide.Set(this->Numerator() * b.Denominator(), this->Denominator() * b.Numerator());
+	return divide;
+};
+
+// produce a new rational which is the opposite of this
+cRational cRational::opposite(void)const {
+	cRational opposite;
+	opposite.Set(this->Numerator() * -1, this->Denominator());
+	return opposite;
+};
+
+
+// produce a new rational which is the reciprocal of this
+cRational cRational::reciprocal(void)const {
+	cRational reciprocal;
+	reciprocal.Set(this->Denominator(), this->Numerator());
+	return reciprocal;
+};
+
+long long pow(long long a, long long b) {
+	if (b > 0) {
+		long long c = 1;
+		while (b != 0) {
+			c *= a;
+			--b;
+		}
+		return c;
+
+	}
+	else {
+		return 1;
+	}
+}
+
+// produce a new rational which is Exponentiation to integer power n
+cRational cRational::exp(const int n)const {
+	cRational power;
+	if (n >= 0) {
+		long long x = this->Numerator();
+		long long y = this->Denominator();
+		power.Set(pow(x, n), pow(y, n));
+		return power;
+	}
+	else {
+		long long x = this->Numerator();
+		long long y = this->Denominator();
+		int r;
+		r = -n;
+		power.Set(pow(y, r), pow(x, r));
+		return power;
+		
+	}
+
+}
+
+
+		// We'll make gcd static so that it can be part of class rational without
+		// requiring an object of type cRational
+static long long Greatest_Comon_Denominator(long long a, long long b) {
+	while (b != 0) {
+		long long x = b;
+		b = a % b;
+		a = x;
+	}
+	return a;	
+}
+
+
+// Problem2.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+
+#include "cRational.h" 
+#include <iostream>
+#include <string>
+using namespace OOP;
+using namespace std;
+
+int main()
+{
+	cRational a;
+	std::cout << "Output of default constructor using getters:" << a.Numerator() << "/" << a.Denominator() << std::endl;
+	std::cout << "Output of default constructor using friend function:" << a << std::endl;
+
+	cRational b(1, 2);
+	std::cout << "Output of complete constructor using friend function:" << b << std::endl;
+
+	cRational c(b);
+	std::cout << "Output of copy constructor using friend function:" << c << std::endl;
+
+	cRational d(2, 2);
+
+	d.Set(8);
+	std::cout << "Testing the set function, Set(8) " << d << std::endl;
+
+	cRational e;
+	e.Set(12, 1000);
+	std::cout << "testing the set function, Set(12,1000) " << e << std::endl;
+	std::cout << "\n";
+	std::cout << "Please input 2 fractions (a/b)\n";
+
+	long long f;
+	long long g;
+	long long h;
+	long long i;
+	char s;
+
+	std::cout << "input first fraction" << std::endl;
+	
+	std::cin >> f >> s >> g;
+	
+	cRational j(f,g);
+
+	std::cout << "input second fraction" << std::endl;
+	
+	std::cin >> h >> s >> i;
+
+	cRational k(h,i);
+
+	j.canonicalform();
+	k.canonicalform();
+
+	std::cout << "Testing Canonical form" << " Fraction 1" << " = " << j << std::endl;
+	std::cout << "Testing Canonical form" << " Fraction 2" << " = " << k << std::endl;
+
+	std::cout << "Testing RealValue of" << " Fraction 1" << " = " << j.RealValue() << std::endl;
+	std::cout << "Testing RealValue of" << " Fraction 2" << " = " << k.RealValue() << std::endl;
+
+	std::cout << "Testing + operator " << j << " + " << k << " = " << j + k << std::endl;
+	cRational l;
+	std::cout << "Testing Add function " << j << " + " << k << " = " << l.Add(j,k) << std::endl;
+	std::cout << "Testing - operator " << j << " - " << k << " = " << j - k << std::endl;
+	std::cout << "Testing * operator " << j << " * " << k << " = " << j * k << std::endl;
+	std::cout << "Testing / operator " << j << " / " << k << " = " << j / k << std::endl;
+
+	string m;
+	if ((j < k) == 1) {
+		m = "true";
+	}
+	else {
+		m = "false";
+	}
+	std::cout << "Testing < operator " << j << " < " << k << " = " << m << std::endl;
+
+	string m1;
+	if ((j > k) == 1) {
+		m1 = "true";
+	}
+	else {
+		m1 = "false";
+	}
+	std::cout << "Testing > operator " << j << " > " << k << " = " << m1 << std::endl;
+
+	string m2;
+	if ((j <= k) == 1) {
+		m2 = "true";
+	}
+	else {
+		m2 = "false";
+	}
+	std::cout << "Testing <= operator " << j << " <= " << k << " = " << m2 << std::endl;
+
+	string m3;
+	if ((j >= k) == 1) {
+		m3 = "true";
+	}
+	else {
+		m3 = "false";
+	}
+	std::cout << "Testing >= operator " << j << " >= " << k << " = " << m3 << std::endl;
+
+	string m4;
+	if ((j == k) == 1) {
+		m4 = "true";
+	}
+	else {
+		m4 = "false";
+	}
+	std::cout << "Testing == operator " << j << " == " << k << " = " << m4 << std::endl;
+
+	string m5;
+	if ((j != k) == 1) {
+		m5 = "true";
+	}
+	else {
+		m5 = "false";
+	}
+	std::cout << "Testing != operator " << j << " != " << k << " = " << m5 << std::endl;
+
+
+	std::cout << "Testing oppoiste of " << " Fraction 1" << " = " << j.opposite() << std::endl;
+	std::cout << "Testing oppoiste of " << " Fraction 2" << " = " << k.opposite() << std::endl;
+	std::cout << "Testing reciprocal of " << " Fraction 1" << " = " << j.reciprocal() << std::endl;
+	std::cout << "Testing reciprocal of " << " Fraction 2" << " = " << k.reciprocal() << std::endl;
+
+	cRational y;
+	cRational x;
+
+	std::cout << "Testing gcd of " << " Fraction 1" << " = " << y.GCD(j.Numerator(), j.Denominator()) << std::endl;
+	std::cout << "Testing gcd of " << " Fraction 2" << " = " << x.GCD(k.Numerator(), k.Denominator()) << std::endl;
+
+	std::cout << "Testing exponent function: please enter integer exponent" << std::endl;
+	int z;
+	std::cin >> z ;
+	std::cout << "Testing Fraction 1 to the power of " << z << " = " << j.exp(z) << std::endl;
+	std::cout << "Testing Fraction 2 to the power of " << z << " = " << k.exp(z) << std::endl;
+	
+
+
+
+
+	
+
+
+
+}
+
+
+
+
+

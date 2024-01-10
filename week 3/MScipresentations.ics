@@ -1,0 +1,13 @@
+BEGIN:VCALENDAR
+BEGIN:VEVENT
+SUMMARY:MSci presentations [Doodle]
+ORGANIZER:MAILTO:mailer@doodle.com
+X-MICROSOFT-CDO-BUSYSTATUS:BUSY
+URL:https://doodle.com/poll/k4vxgc52as3aft5h
+DESCRIPTION:Initiated by David\nPlease choose one slot each. Each session will last 2-2.5 hours, and will have either 4 or 5 people presenting (14 in total).\n
+DTSTAMP:20210516T133937Z
+UID:1621859400000-2077384831@doodle.biz
+DTSTART:20210524T123000Z
+DTEND:20210524T150000Z
+END:VEVENT
+END:VCALENDAR

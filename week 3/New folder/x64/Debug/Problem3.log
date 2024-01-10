@@ -1,0 +1,9 @@
+﻿  Problem3.cpp
+  TimeSeriesTransformations.cpp
+D:\Maths\finance coding\week 3\New folder\TimeSeriesTransformations.cpp(153,40): warning C4244: 'argument': conversion from 'time_t' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=double
+          ]
+  Generating Code...
+  Problem3.vcxproj -> D:\Maths\finance coding\week 3\New folder\x64\Debug\Problem3.exe

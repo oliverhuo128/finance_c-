@@ -1,0 +1,12 @@
+# Lab problems 3 - Deep Copy Vs Shallow Copy
+
+## Problem 1
+
+Create a Dynamic row class, Using int pointer and dynamic memory
+
+## Problem 2
+
+Convert the dynamic row class to  use templates for its type instead of Integers
+
+
+
